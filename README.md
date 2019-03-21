@@ -1,7 +1,8 @@
 # Taranis-XLite-Q7-Lua-Dashboard
 A simple lua-based dashboard for the OpenTX XLite/QX7 Transmitters
 
-![ec2 image tag example](./screenshot1.jpg)
+A cool review and overview and howto video by a fellow user
+[![](http://img.youtube.com/vi/ijMYaCudgWI/0.jpg)](http://www.youtube.com/watch?v=ijMYaCudgWI "Farleys Lua Dashboard - by DroneRacer101")
 
 ## Features
 * Battery voltage (numerical and graphical)

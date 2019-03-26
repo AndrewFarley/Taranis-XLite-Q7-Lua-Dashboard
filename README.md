@@ -49,5 +49,24 @@ Setting up the script as a telemetry page will enable access at the press of a b
 1. Press the bottom button to back out to the main menu.
 1. From now on, while on the main menu with this model, simply move the eraser to the bottom position for about 2 seconds and it will activate your first telemetry screen!
 
+## Script Editing / Modification Notes
+Since not everyone uses the same controller configuration as myself, here's some tips to edit the script for your uses...
+
+1. To change which button arms the dashboard... please change the value of 'sa' to a different input [here](https://github.com/AndrewFarley/Taranis-XLite-Q7-Lua-Dashboard/blob/master/farl.lua#L417)
+
+1. To change to a two-stage arming mechanism, change the above option to a "logical" switch.  Eg: `armed = getValue('ls2')`.  See: [Issue #2](https://github.com/AndrewFarley/Taranis-XLite-Q7-Lua-Dashboard/issues/2)
+
+1. To invert the arming switch to be backwards from how it is (eg: if you are armed when this dashboard says it is disarmed) please modify the code [here](https://github.com/AndrewFarley/Taranis-XLite-Q7-Lua-Dashboard/blob/master/farl.lua#L485).  Typically you'd just invert all the `<` and `>`'s in those two lines related to armed.
+
+1. To change which button sets your mode, please modify [this line](https://github.com/AndrewFarley/Taranis-XLite-Q7-Lua-Dashboard/blob/master/farl.lua#L421) to a different input.
+
+1. To change the name of each mode on the mode switch, please modify [these lines](https://github.com/AndrewFarley/Taranis-XLite-Q7-Lua-Dashboard/blob/master/farl.lua#L462)
+
+1. To setup your handset to do a timer this is a standard OpenTX feature.  You can google how to do this, or see [this](https://github.com/AndrewFarley/Taranis-XLite-Q7-Lua-Dashboard/issues/1#issuecomment-467408335) bug report for more info.
+
+1. For more information on how to program in Lua specifically for OpenTX, please [See Here](https://opentx.gitbooks.io/opentx-2-2-lua-reference-guide/content/)
+
+
+
 ## Support, etc
-* Please feel free to submit issues, feedback, etc. to the gitlab page, or email me!  :)
+* Please feel free to submit issues, feedback, etc. to the gitlab page, or email me!  :)  Any time you guys do, I will try to update this README to include more information for future users.

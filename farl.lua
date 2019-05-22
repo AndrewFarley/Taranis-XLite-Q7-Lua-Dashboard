@@ -385,9 +385,9 @@ local function drawVoltageImage(start_x, start_y)
   lcd.drawText(start_x + batteryWidth + 4, start_y + 47, "3.3v", SMLSIZE)
   
   -- Now draw how full our voltage is...
-  local voltage = getValue('VFAS')
+  local voltage = getValue('A4')
   voltageLow = 3.3
-  voltageHigh = 4.35
+  voltageHigh = 4.2
   voltageIncrement = ((voltageHigh - voltageLow) / 47)
   
   local offset = 0  -- Start from the bottom up

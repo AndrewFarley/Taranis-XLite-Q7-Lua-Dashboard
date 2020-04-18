@@ -383,8 +383,10 @@ local function drawGPS(start_x, start_y, coords)
   -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
   lcd.drawRectangle( start_x, start_y, 44, 10 )
   lcd.drawText( start_x + 2, start_y + 2, "GPS coordinates", SMLSIZE )
-  lcd.drawText(start_x + 5, start_y + 12, coords[0], SMLSIZE)
-  lcd.drawText(start_x + 5, start_y + 12, coords[1], SMLSIZE)
+  if (type(coords) == "table") then
+    lcd.drawText(start_x + 5, start_y + 12, coords["lon"], SMLSIZE)
+    lcd.drawText(start_x + 5, start_y + 12, coords["lat"], SMLSIZE)
+  end
 end
 
 local function drawVoltageImage(start_x, start_y)

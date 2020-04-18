@@ -6,6 +6,19 @@
 -- Please feel free to submit issues, feedback, etc.
 ----------------------------------------------------------
 
+-- Templating
+
+-- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
+local displayGPS = false
+
+
+local displayRssi = false
+local displayPowerOutput = false
+
+-- Will be displayed only if displayGPS, Rssi and PowerOuput are set to false
+local displayFillingText = true
+
+
 
 ------- GLOBALS -------
 -- The model name when it can't detect a model name  from the handset
@@ -30,6 +43,19 @@ local link_quality = 0
 -- For debugging / development
 local lastMessage = "None"
 local lastNumberMessage = "0"
+
+-- Templating
+
+-- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
+local displayGPS = false
+
+
+local displayRssi = false
+local displayPowerOutput = false
+
+-- Will be displayed only if displayGPS, Rssi and PowerOuput are set to false
+local displayFillingText = true
+
 
 
 ------- HELPERS -------
@@ -346,9 +372,33 @@ local function drawVoltageText(start_x, start_y)
   lcd.drawText(start_x + 31, start_y + 4, 'v', MEDSIZE)
 end
 
---local function drawTbsLogo(start_x, start_y)
+local function drawPower(start_x, start_y, output_power)
   -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
--- end
+  lcd.drawRectangle( start_x, start_y, 44, 10 )
+  lcd.drawText( start_x + 2, start_y + 2, "Power", SMLSIZE )
+  lcd.drawRectangle( start_x, start_y + 10, 44, 20 )
+  lcd.drawText(start_x + 5, start_y + 12, output_power, DBLSIZE)
+end
+
+local function drawRssiDbm(start_x, start_y, rssi_dbm)
+  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
+  lcd.drawText( start_x + 2, start_y + 2, "Rssi quality", SMLSIZE )
+  lcd.drawGauge( start_x, start_y + 10, 64, 15, rssi_dbm, 100 )
+  --  lcd.drawText(start_x + 5, start_y + 12, rssi_dbm, DBLSIZE)
+end
+
+local function drawSendIt(start_x, start_y, rssi_dbm)
+  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
+  lcd.drawText( start_x + 2, start_y + 2, "Send It !", DBLSIZE )
+
+end
+
+local function drawGPS(start_x, start_y, coords)
+  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
+  lcd.drawRectangle( start_x, start_y, 44, 10 )
+  lcd.drawText( start_x + 2, start_y + 2, "GPS", SMLSIZE )
+  lcd.drawText(start_x + 5, start_y + 12, coords, SMLSIZE)
+end
 
 local function drawVoltageImage(start_x, start_y)
 
@@ -403,6 +453,9 @@ local function gatherInput(event)
 
   -- Get our link_quality
   link_quality = getValue("TQly")
+  output_power = getValue("TPWR")
+  rssi_dbm = getValue("RSNR")
+  coords = getValue("GPS")
 
   -- Get the seconds left in our timer
   timerLeft = getValue('timer1')
@@ -522,8 +575,27 @@ local function run(event)
   -- Draw voltage battery graphic
   drawVoltageImage(3, 10)
 
-  --drawTbsLogo(50,30)
+  if(displayGPS == false) then
+    if(displayRssi == true) then
+      drawRssiDbm(3,65, rssi_dbm)
+    end
+    if (displayPowerOutput == true) then
+      drawPower(84,65, output_power)
+    end
+    if(displayRssi == false and displayPowerOutput == false and displayFillingText == true) then
+      lcd.drawText(8,70, "Team Blacksheep", MIDSIZE)
+    end
+  else
+    drawGPS(3, 65, coords)
+  end
 
+
+
+
+
+  --
+
+  -- drawSendIt(47, 65)
   return 0
 end
 

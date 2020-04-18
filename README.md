@@ -21,9 +21,7 @@ A simple lua-based dashboard for the TBS Tango2
 * Flight Timer, perfect for whooping
 * ANIMATED QUAD WHEN ARMED!!!
 
-## Updated - Template
-I added a (very) light template system : you can edit farl.lua and fill the blank space that is on bottom of the screen with the following options : 
-
+## Update - Template
 
 I added a (very) light template system : you can edit farl.lua and fill the blank space that is on bottom of the screen with the following options : 
 ```

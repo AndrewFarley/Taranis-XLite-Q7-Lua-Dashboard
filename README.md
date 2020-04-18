@@ -1,10 +1,7 @@
 # TBS Tango2 Dashboard
 A simple lua-based dashboard for the TBS Tango2
 
-A cool review and overview and howto video by a fellow user
-[![](http://img.youtube.com/vi/ijMYaCudgWI/0.jpg)](http://www.youtube.com/watch?v=ijMYaCudgWI "Farleys Lua Dashboard - by DroneRacer101")
-
-# Thank you Farley Farley to the original dashboard !
+# Thank you Farley Farley for the original dashboard !
 
 ## WIP : adding TBS logo 
 

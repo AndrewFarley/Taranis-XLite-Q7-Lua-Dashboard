@@ -23,6 +23,9 @@ A simple lua-based dashboard for the TBS Tango2
 
 ## Update - Template
 
+### Two layouts available
+The first as options to display more informations, it's called farl.lua :
+
 I added a (very) light template system : you can edit farl.lua and fill the blank space that is on bottom of the screen with the following options : 
 ```
 -- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
@@ -41,6 +44,8 @@ local displayFillingText = true
 
 You can choose what you want to display ! If everything is set to False, it will be blank as it was.
 
+The second one is a more simple one, but occupying all the space available : it's the farllh.lua
+
 ## Author
 * Written by Farley Farley - farley <at> neonsurge __dot__ com
 * Adapted by Alexandre Santini for Tango2
@@ -54,7 +59,7 @@ How to install:
 
 1. Power the Tango2
 2. Choose "USB Storage (SD)"
-3. Download and copy the the scripts to "SCRIPTS/TELEMETRY" on your SD card.
+3. Download and copy the script farl.lua or/and farllh.lua to "SCRIPTS/TELEMETRY" on your SD card.
 4. Eject the Tango2
 5. Power up your transmitter.
 
@@ -68,7 +73,8 @@ Setting up the script as a telemetry page will enable access at the press of a b
 4. Choose farl.lua
 5. Click on "Exit"
 6. Hold "Page"
-7. Ta-da !
+7. You can do the same for farllh.lua
+8. Ta-da
 
 ## Script Editing / Modification Notes
 Since not everyone uses the same controller configuration as myself, here's some tips to edit the script for your uses...

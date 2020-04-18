@@ -26,13 +26,13 @@ A simple lua-based dashboard for the TBS Tango2
 I added a (very) light template system : you can edit farl.lua and fill the blank space that is on bottom of the screen with the following options : 
 ```
 -- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
--- Display the GPS Coordinates of the quad
+-- Display the GPS Coordinates of the quad 
 local displayGPS = false
 
--- Display to Signal to noise ratio
+-- Display Signal to Noise ratio
 local displayRssi = false
 
--- Display to PowerOuput (useful to avoid to fly at 25mw in a bando)
+-- Display the Tango2 PowerOuput (useful to avoid to fly at 25mw in a bando)
 local displayPowerOutput = false
 
 -- Will be displayed only if displayGPS, Rssi and PowerOuput are set to false

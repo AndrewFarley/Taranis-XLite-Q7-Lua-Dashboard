@@ -3,7 +3,7 @@ A simple lua-based dashboard for the TBS Tango2
 
 # Thank you Farley Farley for the original dashboard !
 
-## WIP : adding TBS logo 
+
 
 ## Crossfire does not display Average cells values - If it does, please open an issue to make me correct this (not an expert)
 * By default, you will see the cumulated voltages on the display screen. That means that the battery gauge on the left will display irrelevant informations. If you want to fetch average cells voltage, type `set report_cell_voltage = ON` on Betaflight CLI.
@@ -14,8 +14,34 @@ A simple lua-based dashboard for the TBS Tango2
 * Model name
 * Time
 * Link Quality
+* Signal to noise ratio
+* GPS Coordinates
+* Power output
+* Customized text 
 * Flight Timer, perfect for whooping
 * ANIMATED QUAD WHEN ARMED!!!
+
+## Updated - Template
+I added a (very) light template system : you can edit farl.lua and fill the blank space that is on bottom of the screen with the following options : 
+
+
+I added a (very) light template system : you can edit farl.lua and fill the blank space that is on bottom of the screen with the following options : 
+```
+-- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
+-- Display the GPS Coordinates of the quad
+local displayGPS = false
+
+-- Display to Signal to noise ratio
+local displayRssi = false
+
+-- Display to PowerOuput (useful to avoid to fly at 25mw in a bando)
+local displayPowerOutput = false
+
+-- Will be displayed only if displayGPS, Rssi and PowerOuput are set to false
+local displayFillingText = true
+```
+
+You can choose what you want to display ! If everything is set to False, it will be blank as it was.
 
 ## Author
 * Written by Farley Farley - farley <at> neonsurge __dot__ com

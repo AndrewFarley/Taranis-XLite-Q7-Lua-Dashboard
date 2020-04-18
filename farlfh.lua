@@ -394,6 +394,13 @@ local function drawVoltageImage(start_x, start_y)
   end
 end
 
+local function drawRssiDbm(start_x, start_y, rssi_dbm)
+  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
+  lcd.drawText( start_x + 2, start_y + 2, "Locator", SMLSIZE )
+  lcd.drawGauge( start_x, start_y + 10, 45, 15, rssi_dbm, 100 )
+  --  lcd.drawText(start_x + 5, start_y + 12, rssi_dbm, DBLSIZE)
+end
+
 local function gatherInput(event)
 
   -- Get our link_quality
@@ -509,7 +516,7 @@ local function run(event)
   drawTransmitterVoltage(0,2, currentVoltage)
 
   -- Draw our flight timer
-  drawFlightTimer(2, 60)
+  drawRssiDbm(2, 60, rssi_dbm)
 
   -- Draw link_quality
   drawlink_quality(2, 25)

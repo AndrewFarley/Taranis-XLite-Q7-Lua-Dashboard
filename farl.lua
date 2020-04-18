@@ -8,7 +8,7 @@
 
 -- Templating
 
--- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
+-- If you set the GPS, it will not show Quad locator & Power ouput in order to keep a readable screen
 local displayGPS = false
 
 
@@ -382,7 +382,7 @@ end
 
 local function drawRssiDbm(start_x, start_y, rssi_dbm)
   -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
-  lcd.drawText( start_x + 2, start_y + 2, "Rssi quality", SMLSIZE )
+  lcd.drawText( start_x + 2, start_y + 2, "Quad Locator", SMLSIZE )
   lcd.drawGauge( start_x, start_y + 10, 64, 15, rssi_dbm, 100 )
   --  lcd.drawText(start_x + 5, start_y + 12, rssi_dbm, DBLSIZE)
 end
@@ -453,8 +453,11 @@ local function gatherInput(event)
 
   -- Get our link_quality
   link_quality = getValue("TQly")
+  -- Get the Output power of the transmitter
   output_power = getValue("TPWR")
-  rssi_dbm = getValue("RSNR")
+  -- Get the downlink RSSI to be able to find the quad
+  rssi_dbm = getValue("TSNR")
+  -- Get GPS values
   coords = getValue("GPS")
 
   -- Get the seconds left in our timer

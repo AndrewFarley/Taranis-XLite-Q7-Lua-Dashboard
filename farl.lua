@@ -15,7 +15,7 @@ local displayGPS = false
 local displayRssi = false
 local displayPowerOutput = false
 
--- Will be displayed only if displayGPS, Rssi and PowerOuput are set to false
+-- Will be displayed only if displayGPS, Quad locator and PowerOuput are set to false
 local displayFillingText = true
 
 
@@ -43,20 +43,6 @@ local link_quality = 0
 -- For debugging / development
 local lastMessage = "None"
 local lastNumberMessage = "0"
-
--- Templating
-
--- If you set the GPS, it will no show Rssi Quality & Power ouput in order to keep a readable screen
-local displayGPS = false
-
-
-local displayRssi = false
-local displayPowerOutput = false
-
--- Will be displayed only if displayGPS, Rssi and PowerOuput are set to false
-local displayFillingText = true
-
-
 
 ------- HELPERS -------
 -- Helper converts voltage to percentage of voltage for a sexy battery percent

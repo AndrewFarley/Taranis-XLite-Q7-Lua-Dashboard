@@ -394,11 +394,16 @@ local function drawVoltageImage(start_x, start_y)
   end
 end
 
-local function drawRssiDbm(start_x, start_y, rssi_dbm)
+local function drawQuadLocator(start_x, start_y, rssi, tsnr)
+  readable_rssi = 0
+  if(rssi > 0) then
+    readable_rssi = 120 - rssi
+  end
   -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
   lcd.drawText( start_x + 2, start_y + 2, "Locator", SMLSIZE )
-  lcd.drawGauge( start_x, start_y + 10, 45, 15, rssi_dbm, 100 )
-  --  lcd.drawText(start_x + 5, start_y + 12, rssi_dbm, DBLSIZE)
+  lcd.drawGauge( start_x, start_y + 10, 45, 15, tsnr, 100 )
+  lcd.drawGauge( start_x, start_y + 28, 45, 15, readable_rssi, 100)
+  --lcd.drawText(start_x, start_y + 25, readable_rssi, SMLSIZE)
 end
 
 local function gatherInput(event)
@@ -407,8 +412,10 @@ local function gatherInput(event)
   link_quality = getValue("TQly")
   -- Get the Output power of the transmitter
   output_power = getValue("TPWR")
-  -- Get the downlink RSSI to be able to find the quad
-  rssi_dbm = getValue("TSNR")
+  -- Get the downlink stn ratio to be able to find the quad
+  tsnr = getValue("TSNR")
+  -- Also get RSSI to be more accurate
+  rssi = getValue("2RSS")
   -- Get GPS values
   coords = getValue("GPS")
 
@@ -516,7 +523,7 @@ local function run(event)
   drawTransmitterVoltage(0,2, currentVoltage)
 
   -- Draw our flight timer
-  drawRssiDbm(2, 60, rssi_dbm)
+  drawQuadLocator(2, 50, rssi, tsnr)
 
   -- Draw link_quality
   drawlink_quality(2, 25)

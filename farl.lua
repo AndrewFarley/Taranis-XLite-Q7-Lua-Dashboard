@@ -9,16 +9,14 @@
 -- Templating
 
 -- If you set the GPS, it will not show Quad locator & Power ouput in order to keep a readable screen
-local displayGPS = false
+local displayGPS = true
 
-
-local displayRssi = false
-local displayPowerOutput = false
+-- Drone locator & Power ouput
+local displayQuadLocator = true
+local displayPowerOutput = true
 
 -- Will be displayed only if displayGPS, Quad locator and PowerOuput are set to false
 local displayFillingText = true
-
-
 
 ------- GLOBALS -------
 -- The model name when it can't detect a model name  from the handset
@@ -366,7 +364,7 @@ local function drawPower(start_x, start_y, output_power)
   lcd.drawText(start_x + 5, start_y + 12, output_power, DBLSIZE)
 end
 
-local function drawRssiDbm(start_x, start_y, rssi_dbm)
+local function drawQuadLocator(start_x, start_y, rssi_dbm)
   -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
   lcd.drawText( start_x + 2, start_y + 2, "Quad Locator", SMLSIZE )
   lcd.drawGauge( start_x, start_y + 10, 64, 15, rssi_dbm, 100 )
@@ -381,11 +379,10 @@ end
 
 local function drawGPS(start_x, start_y, coords)
   -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
-  lcd.drawRectangle( start_x, start_y, 44, 10 )
   lcd.drawText( start_x + 2, start_y + 2, "GPS coordinates", SMLSIZE )
   if (type(coords) == "table") then
-    lcd.drawText(start_x + 5, start_y + 12, coords["lon"], SMLSIZE)
-    lcd.drawText(start_x + 5, start_y + 12, coords["lat"], SMLSIZE)
+    local gpsValue = round(coords["lat"],4) .. ", " .. round(coords["lon"],4)
+    lcd.drawText(start_x + 5, start_y + 12, gpsValue, SMLSIZE)
   end
 end
 
@@ -568,8 +565,8 @@ local function run(event)
   drawVoltageImage(3, 10)
 
   if(displayGPS == false) then
-    if(displayRssi == true) then
-      drawRssiDbm(3,65, rssi_dbm)
+    if(displayQuadLocator == true) then
+      drawQuadLocator(3,65, rssi_dbm)
     end
     if (displayPowerOutput == true) then
       drawPower(84,65, output_power)

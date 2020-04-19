@@ -9,11 +9,11 @@
 -- Templating
 
 -- If you set the GPS, it will not show Quad locator & Power ouput in order to keep a readable screen
-local displayGPS = true
+local displayGPS = false
 
 -- Drone locator & Power ouput
-local displayQuadLocator = true
-local displayPowerOutput = true
+local displayQuadLocator = false
+local displayPowerOutput = false
 
 -- Will be displayed only if displayGPS, Quad locator and PowerOuput are set to false
 local displayFillingText = true

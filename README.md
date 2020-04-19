@@ -6,7 +6,20 @@ A simple lua-based dashboard for the TBS Tango2
 
 
 ## Crossfire does not display Average cells values - If it does, please open an issue to make me correct this (not an expert)
-* By default, you will see the cumulated voltages on the display screen. That means that the battery gauge on the left will display irrelevant informations. If you want to fetch average cells voltage, type `set report_cell_voltage = ON` on Betaflight CLI.
+By default, you will see the cumulated voltages on the display screen. That means that the battery gauge on the left will display irrelevant informations. If you want to fetch average cells voltage, type `set report_cell_voltage = ON` on Betaflight CLI.
+
+## So, what does it look like ?
+### farl.lua
+#### default
+![](/screenshots/default.bmp)
+#### with Drone locator & Power ouput
+![](/screenshots/locator-output.bmp)
+#### with GPS
+![](/screenshots/gps.bmp)
+
+### farllh.lua
+![](/screenshots/default-lh.bmp)
+
 
 ## Features
 * Battery voltage (numerical and graphical) (graphical will only work correctly if you put `set  report_cell_voltage = ON` on Betaflight CLI.)

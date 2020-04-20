@@ -19,6 +19,7 @@ local timerLeft = 0
 local maxTimerValue = 0
 -- For armed drawing
 local armed = 0
+local flight_mode = 0 -- local variable for telemetry flight mode
 -- For mode drawing
 local mode = 0
 -- Animation increment
@@ -430,10 +431,10 @@ local function gatherInput(event)
   currentVoltage = getValue('tx-voltage')
 
   -- Armed / Disarm / Buzzer switch
-  armed = getValue('sa')
+  -- armed = getValue('sa') -- no longer needed
 
-  -- Our "mode" switch
-  mode = getValue('sc')
+  -- Our "mode" switch -- uses actual telemetry
+  flight_mode = getValue("FM")
 
   -- Do some event handling to figure out what button(s) were pressed  :)
   if event > 0 then
@@ -474,14 +475,30 @@ local function gatherInput(event)
 end
 
 
-local function getModeText()
-  local modeText = "Unknown"
-  if mode < -512 then
-    modeText = "Angle"
-  elseif mode > -100 and mode < 100 then
-    modeText = "Acro"
-  elseif mode > 512 then
-    modeText = "Horizon"
+local function getModeText() -- modified to use actual flight mode from CrossFire telemetry and make modes more legible
+  local modeText = "DISARM"
+  if flight_mode == "!ERR" or flight_mode == "!ERR*" then
+    modeText = "ERROR"
+  elseif flight_mode == "!FS!" or flight_mode == "!FS!*" then
+    modeText = "FAILSAFE"
+  elseif flight_mode == "RTH"then
+    modeText = "RTH"
+  elseif flight_mode == "MANU"then
+    modeText = "MANUAL"
+  elseif flight_mode == "STAB"then
+    modeText = "ANGLE"
+  elseif flight_mode == "HOR" then
+    modeText = "HORIZON"
+  elseif flight_mode == "AIR" then
+    modeText = "AIR"
+  elseif flight_mode == "ACRO" then
+    modeText = "ACRO"
+  elseif flight_mode == "WAIT" or flight_mode == "WAIT*" then
+    modeText = "WAIT"
+  elseif ((string.sub(flight_mode,-1) == "*") and (flight_mode ~= "!ERR*") and (flight_mode ~= "!FS!*") and (flight_mode ~= "WAIT*")) then
+    modeText = "DISARM"
+  else
+    modeText = "UNKNOWN"
   end
   return modeText
 end
@@ -497,10 +514,10 @@ local function run(event)
   -- Set our animation "frame"
   setAnimationIncrement()
 
-  -- Check if we just armed...
-  if armed > 512 then
+ -- Check if we just armed... modified to use CrossFire telemetry modes to determine armed state
+  if ((string.sub(flight_mode, -1) ~= "*") and (flight_mode ~= 0)) then
     isArmed = 1
-  elseif armed < 512 and isArmed == 1 then
+  elseif string.sub(flight_mode, -1) == "*" and isArmed == 1 then
     isArmed = 0
   else
     isArmed = 0
@@ -512,9 +529,9 @@ local function run(event)
   -- Draw our model name centered at the top of the screen
   lcd.drawText( 64 - math.ceil((#modelName * 5) / 2),2, modelName, XLSIZE)
 
-  -- Draw our mode centered at the top of the screen just under that...
+  -- Draw our mode centered at the top of the screen just under that... modified to center a little better
   modeText = getModeText()
-  lcd.drawText( 64 - math.ceil((#modeText * 5) / 3),25, modeText, XLSIZE)
+  lcd.drawText(68 - math.ceil((#modeText * 6) / 2),25, modeText, XLSIZE)
 
   -- Draw our sexy quadcopter animated (if armed) from scratch
   drawQuadcopter(52, 36)

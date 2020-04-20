@@ -527,7 +527,7 @@ local function getModeText()
   elseif flight_mode == "ACRO" then
     modeText = "ACRO"
   elseif flight_mode == "WAIT" or flight_mode == "WAIT*" then
-    modeText = "WgAIT"
+    modeText = "WAIT"
   elseif ((string.sub(flight_mode,-1) == "*") and (flight_mode ~= "!ERR*") and (flight_mode ~= "!FS!*") and (flight_mode ~= "WAIT*")) then
     modeText = "DISARM"
   else

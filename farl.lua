@@ -12,8 +12,8 @@
 local displayGPS = false
 
 -- Drone locator & Power ouput
-local displayQuadLocator = false
-local displayPowerOutput = false
+local displayQuadLocator = true
+local displayPowerOutput = true
 
 -- Will be displayed only if displayGPS, Quad locator and PowerOuput are set to false
 local displayFillingText = true
@@ -53,6 +53,15 @@ local function convertVoltageToPercentage(voltage)
     curVolPercent = 100
   end
   return curVolPercent
+end
+
+-- Round routine for GPS
+local function round(num, idp)
+  local temp = 10^(idp or 0)
+  if num >= 0 then
+    return math.floor(num * temp + 0.5) / temp
+  else
+    return math.ceil(num * temp - 0.5) / temp end
 end
 
 -- A little animation / frame counter to help us with various animations
@@ -456,11 +465,8 @@ local function gatherInput(event)
   -- Get our current transmitter voltage
   currentVoltage = getValue('tx-voltage')
 
-  -- Armed / Disarm / Buzzer switch
-  armed = getValue('sa')
-
   -- Our "mode" switch
-  mode = getValue('sc')
+  flight_mode = getValue("FM")
 
   -- Do some event handling to figure out what button(s) were pressed  :)
   if event > 0 then
@@ -503,12 +509,29 @@ end
 
 local function getModeText()
   local modeText = "Unknown"
-  if mode < -512 then
-    modeText = "Angle"
-  elseif mode > -100 and mode < 100 then
-    modeText = "Acro"
-  elseif mode > 512 then
-    modeText = "Horizon"
+
+  if flight_mode == "!ERR" or flight_mode == "!ERR*" then
+    modeText = "----"
+  elseif flight_mode == "!FS!" or flight_mode == "!FS!*" then
+    modeText = "FAILSAFE"
+  elseif flight_mode == "RTH"then
+    modeText = "RTH"
+  elseif flight_mode == "MANU"then
+    modeText = "MANUAL"
+  elseif flight_mode == "STAB"then
+    modeText = "ANGLE"
+  elseif flight_mode == "HOR" then
+    modeText = "HORIZON"
+  elseif flight_mode == "AIR" then
+    modeText = "AIR"
+  elseif flight_mode == "ACRO" then
+    modeText = "ACRO"
+  elseif flight_mode == "WAIT" or flight_mode == "WAIT*" then
+    modeText = "WgAIT"
+  elseif ((string.sub(flight_mode,-1) == "*") and (flight_mode ~= "!ERR*") and (flight_mode ~= "!FS!*") and (flight_mode ~= "WAIT*")) then
+    modeText = "DISARM"
+  else
+    modeText = "----"
   end
   return modeText
 end

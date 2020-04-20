@@ -430,10 +430,8 @@ local function gatherInput(event)
   -- Get our current transmitter voltage
   currentVoltage = getValue('tx-voltage')
 
-  -- Armed / Disarm / Buzzer switch
-  -- armed = getValue('sa') -- no longer needed
-
   -- Our "mode" switch -- uses actual telemetry
+
   flight_mode = getValue("FM")
 
   -- Do some event handling to figure out what button(s) were pressed  :)
@@ -476,9 +474,9 @@ end
 
 
 local function getModeText() -- modified to use actual flight mode from CrossFire telemetry and make modes more legible
-  local modeText = "DISARM"
+  local modeText = "NONE"
   if flight_mode == "!ERR" or flight_mode == "!ERR*" then
-    modeText = "ERROR"
+    modeText = "----"
   elseif flight_mode == "!FS!" or flight_mode == "!FS!*" then
     modeText = "FAILSAFE"
   elseif flight_mode == "RTH"then
@@ -498,7 +496,7 @@ local function getModeText() -- modified to use actual flight mode from CrossFir
   elseif ((string.sub(flight_mode,-1) == "*") and (flight_mode ~= "!ERR*") and (flight_mode ~= "!FS!*") and (flight_mode ~= "WAIT*")) then
     modeText = "DISARM"
   else
-    modeText = "UNKNOWN"
+    modeText = "----"
   end
   return modeText
 end

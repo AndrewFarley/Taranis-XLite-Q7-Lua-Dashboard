@@ -42,6 +42,9 @@ local link_quality = 0
 local lastMessage = "None"
 local lastNumberMessage = "0"
 
+-- Save last known GPS for display if link lost
+local lastGPS = "NA"
+
 ------- HELPERS -------
 -- Helper converts voltage to percentage of voltage for a sexy battery percent
 local function convertVoltageToPercentage(voltage)
@@ -391,8 +394,11 @@ local function drawGPS(start_x, start_y, coords)
   lcd.drawText( start_x + 2, start_y + 2, "GPS coordinates", SMLSIZE )
   if (type(coords) == "table") then
     local gpsValue = round(coords["lat"],4) .. ", " .. round(coords["lon"],4)
+	lastGPS=gpsValue
     lcd.drawText(start_x + 5, start_y + 12, gpsValue, SMLSIZE)
   end
+  -- Draw last known gpsValue
+  lcd.drawText(start_x + 5, start_y + 12, lastGPS, SMLSIZE)
 end
 
 local function drawVoltageImage(start_x, start_y)

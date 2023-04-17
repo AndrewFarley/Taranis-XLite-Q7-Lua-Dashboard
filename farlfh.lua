@@ -6,17 +6,6 @@
 -- Please feel free to submit issues, feedback, etc.
 ----------------------------------------------------------
 
--- Templating
-
--- If you set the GPS, it will not show Quad locator & Power ouput in order to keep a readable screen
-local displayGPS = false
-
--- Drone locator & Power ouput
-local displayQuadLocator = true
-local displayPowerOutput = true
-
--- Will be displayed only if displayGPS, Quad locator and PowerOuput are set to false
-local displayFillingText = true
 
 ------- GLOBALS -------
 -- The model name when it can't detect a model name  from the handset
@@ -30,6 +19,7 @@ local timerLeft = 0
 local maxTimerValue = 0
 -- For armed drawing
 local armed = 0
+local flight_mode = 0 -- local variable for telemetry flight mode
 -- For mode drawing
 local mode = 0
 -- Animation increment
@@ -42,9 +32,6 @@ local link_quality = 0
 local lastMessage = "None"
 local lastNumberMessage = "0"
 
--- Save last known GPS for display if link lost
-local lastGPS = "NA"
-
 ------- HELPERS -------
 -- Helper converts voltage to percentage of voltage for a sexy battery percent
 local function convertVoltageToPercentage(voltage)
@@ -56,15 +43,6 @@ local function convertVoltageToPercentage(voltage)
     curVolPercent = 100
   end
   return curVolPercent
-end
-
--- Round routine for GPS
-local function round(num, idp)
-  local temp = 10^(idp or 0)
-  if num >= 0 then
-    return math.floor(num * temp + 0.5) / temp
-  else
-    return math.ceil(num * temp - 0.5) / temp end
 end
 
 -- A little animation / frame counter to help us with various animations
@@ -215,8 +193,8 @@ local function drawTime()
   if math.ceil(math.fmod(getTime() / 100, 2)) == 1 then
     hour = hour .. ":"
   end
-  lcd.drawText(107,0,hour, SMLSIZE)
-  lcd.drawText(119,0,min, SMLSIZE)
+  lcd.drawText(107,2,hour, SMLSIZE)
+  lcd.drawText(119,2,min, SMLSIZE)
 end
 
 local function drawlink_quality(start_x, start_y)
@@ -368,39 +346,6 @@ local function drawVoltageText(start_x, start_y)
   lcd.drawText(start_x + 31, start_y + 4, 'v', MEDSIZE)
 end
 
-local function drawPower(start_x, start_y, output_power)
-  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
-  lcd.drawRectangle( start_x, start_y, 44, 10 )
-  lcd.drawText( start_x + 2, start_y + 2, "Power", SMLSIZE )
-  lcd.drawRectangle( start_x, start_y + 10, 44, 20 )
-  lcd.drawText(start_x + 5, start_y + 12, output_power, DBLSIZE)
-end
-
-local function drawQuadLocator(start_x, start_y, rssi_dbm)
-  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
-  lcd.drawText( start_x + 2, start_y + 2, "Quad Locator", SMLSIZE )
-  lcd.drawGauge( start_x, start_y + 10, 64, 15, rssi_dbm, 100 )
-  --  lcd.drawText(start_x + 5, start_y + 12, rssi_dbm, DBLSIZE)
-end
-
-local function drawSendIt(start_x, start_y, rssi_dbm)
-  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
-  lcd.drawText( start_x + 2, start_y + 2, "Send It !", DBLSIZE )
-
-end
-
-local function drawGPS(start_x, start_y, coords)
-  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
-  lcd.drawText( start_x + 2, start_y + 2, "GPS coordinates", SMLSIZE )
-  if (type(coords) == "table") then
-    local gpsValue = round(coords["lat"],4) .. ", " .. round(coords["lon"],4)
-	lastGPS=gpsValue
-    lcd.drawText(start_x + 5, start_y + 12, gpsValue, SMLSIZE)
-  end
-  -- Draw last known gpsValue
-  lcd.drawText(start_x + 5, start_y + 12, lastGPS, SMLSIZE)
-end
-
 local function drawVoltageImage(start_x, start_y)
 
   -- Define the battery width (so we can adjust it later)
@@ -450,14 +395,28 @@ local function drawVoltageImage(start_x, start_y)
   end
 end
 
+local function drawQuadLocator(start_x, start_y, rssi, tsnr)
+  readable_rssi = 0
+  if(rssi > 0) then
+    readable_rssi = 120 - rssi
+  end
+  -- lcd.drawPixMap(start_x, start_y, "/test.bmp")
+  lcd.drawText( start_x + 2, start_y + 2, "Locator", SMLSIZE )
+  lcd.drawGauge( start_x, start_y + 10, 45, 15, tsnr, 100 )
+  lcd.drawGauge( start_x, start_y + 28, 45, 15, readable_rssi, 100)
+  --lcd.drawText(start_x, start_y + 25, readable_rssi, SMLSIZE)
+end
+
 local function gatherInput(event)
 
   -- Get our link_quality
   link_quality = getValue("TQly")
   -- Get the Output power of the transmitter
   output_power = getValue("TPWR")
-  -- Get the downlink RSSI to be able to find the quad
-  rssi_dbm = getValue("TSNR")
+  -- Get the downlink stn ratio to be able to find the quad
+  tsnr = getValue("TSNR")
+  -- Also get RSSI to be more accurate
+  rssi = getValue("2RSS")
   -- Get GPS values
   coords = getValue("GPS")
 
@@ -471,7 +430,8 @@ local function gatherInput(event)
   -- Get our current transmitter voltage
   currentVoltage = getValue('tx-voltage')
 
-  -- Our "mode" switch
+  -- Our "mode" switch -- uses actual telemetry
+
   flight_mode = getValue("FM")
 
   -- Do some event handling to figure out what button(s) were pressed  :)
@@ -513,9 +473,8 @@ local function gatherInput(event)
 end
 
 
-local function getModeText()
-  local modeText = "Unknown"
-
+local function getModeText() -- modified to use actual flight mode from CrossFire telemetry and make modes more legible
+  local modeText = "NONE"
   if flight_mode == "!ERR" or flight_mode == "!ERR*" then
     modeText = "----"
   elseif flight_mode == "!FS!" or flight_mode == "!FS!*" then
@@ -553,67 +512,50 @@ local function run(event)
   -- Set our animation "frame"
   setAnimationIncrement()
 
-  -- Check if we just armed...
-  if armed > 512 then
+ -- Check if we just armed... modified to use CrossFire telemetry modes to determine armed state
+  if ((string.sub(flight_mode, -1) ~= "*") and (flight_mode ~= 0)) then
     isArmed = 1
-  elseif armed < 512 and isArmed == 1 then
+  elseif string.sub(flight_mode, -1) == "*" and isArmed == 1 then
     isArmed = 0
   else
     isArmed = 0
   end
 
   -- Draw a horizontal line seperating the header
-  lcd.drawLine(0, 7, 128, 7, SOLID, FORCE)
+  lcd.drawLine(0, 15, 128, 15, SOLID, FORCE)
 
   -- Draw our model name centered at the top of the screen
-  lcd.drawText( 64 - math.ceil((#modelName * 5) / 2),0, modelName, SMLSIZE)
+  lcd.drawText( 64 - math.ceil((#modelName * 5) / 2),2, modelName, XLSIZE)
 
-  -- Draw our mode centered at the top of the screen just under that...
+  -- Draw our mode centered at the top of the screen just under that... modified to center a little better
   modeText = getModeText()
-  lcd.drawText( 64 - math.ceil((#modeText * 5) / 2),9, modeText, SMLSIZE)
+  lcd.drawText(68 - math.ceil((#modeText * 6) / 2),25, modeText, XLSIZE)
 
   -- Draw our sexy quadcopter animated (if armed) from scratch
-  drawQuadcopter(47, 16)
+  drawQuadcopter(52, 36)
 
   -- Draw our sexy voltage
-  drawTransmitterVoltage(0,0, currentVoltage)
+  drawTransmitterVoltage(0,2, currentVoltage)
 
   -- Draw our flight timer
-  drawFlightTimer(84, 34)
+  drawQuadLocator(2, 50, rssi, tsnr)
 
   -- Draw link_quality
-  drawlink_quality(84, 8)
+  drawlink_quality(2, 25)
 
   -- Draw Time in Top Right
   drawTime()
 
   -- Draw Voltage bottom middle
-  drawVoltageText(45,50)
+  drawVoltageText(50,75)
+
+  -- Adding text
+    lcd.drawText(90, 20, "Avg Cell", SMLSIZE)
+    lcd.drawText(90, 30, "Voltage", SMLSIZE)
 
   -- Draw voltage battery graphic
-  drawVoltageImage(3, 10)
+  drawVoltageImage(89, 39)
 
-  if(displayGPS == false) then
-    if(displayQuadLocator == true) then
-      drawQuadLocator(3,65, rssi_dbm)
-    end
-    if (displayPowerOutput == true) then
-      drawPower(84,65, output_power)
-    end
-    if(displayRssi == false and displayPowerOutput == false and displayFillingText == true) then
-      lcd.drawText(8,70, "Team Blacksheep", MIDSIZE)
-    end
-  else
-    drawGPS(3, 65, coords)
-  end
-
-
-
-
-
-  --
-
-  -- drawSendIt(47, 65)
   return 0
 end
 
